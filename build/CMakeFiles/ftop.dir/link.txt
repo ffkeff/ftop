@@ -1,0 +1,1 @@
+/usr/bin/cc  -O2 -Wall -O3 -DNDEBUG CMakeFiles/ftop.dir/home/ffkeff/projects/ftop/src/ftop.c.o CMakeFiles/ftop.dir/home/ffkeff/projects/ftop/src/procdriver.c.o CMakeFiles/ftop.dir/home/ffkeff/projects/ftop/src/process.c.o -o ftop 

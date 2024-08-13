@@ -1,0 +1,3 @@
+/home/ffkeff/projects/ftop/build/CMakeFiles/ftop.dir
+/home/ffkeff/projects/ftop/build/CMakeFiles/edit_cache.dir
+/home/ffkeff/projects/ftop/build/CMakeFiles/rebuild_cache.dir
