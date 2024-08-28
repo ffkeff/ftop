@@ -17,6 +17,8 @@
 
 /************** PROC ROOT DIRECTORY ***************/
 
+#define PROCDIR "/proc"
+
 enum
 ProcEntryType {
     // For process info directories, like /proc/[pid]
@@ -29,15 +31,7 @@ ProcEntryType {
     Undefined,
 };
 
-struct
-ProcEntry {
-    char                name[MAX_FILE_NAME_LENGHT];
-    enum ProcEntryType  type;
-    struct ProcEntry    *next;
-    struct ProcEntry    *prev;
-};
-
-static const struct ProcEntry entry_name_to_type[] = {
+/*static const struct ProcEntry entry_name_to_type[] = {
     {.name = "cpuinfo",         .type = SystemInfo},
     {.name = "meminfo",         .type = SystemInfo},
     {.name = "version",         .type = SystemInfo},
@@ -54,16 +48,21 @@ static const struct ProcEntry entry_name_to_type[] = {
     {.name = "cgroups",         .type = SystemInfo},
     {.name = "zoneinfo",        .type = SystemInfo},
     //TODO
-};
+};*/
 
 
 /************** PROCESS INFO DIRECTORY ***************/
 
+#define PROCINFO_DIR_DEPTH (2)
+
 i32
 is_process_id(const char *name);
 
+char *
+get_full_path(i32 item);
+
 struct
-StatFileAttributes {
+Stat {
     i32     pid;
     u8      comm[MAX_FILE_NAME_LENGHT];
     u8      state;
@@ -119,7 +118,7 @@ StatFileAttributes {
 };
 
 struct
-StatmFileAttributes {
+Statm {
     u64     size;
     u64     resident;
     u64     shared;
@@ -130,8 +129,59 @@ StatmFileAttributes {
 };
 
 struct
-StatusFileAttributes {
+Status {
 
 };
+
+static const char * to_long_record[] = {
+    ['R'] = "Running",
+    ['D'] = "Uninterruptible Sleep",
+    ['S'] = "Interruptable Sleep",
+    ['T'] = "Stopped",
+    ['Z'] = "Zombie",
+    ['X'] = "Dead",
+    ['t'] = "Tracing stop",
+};
+
+
+/************** PROC ENTRY LIST ****************/
+
+struct
+ProcEntry {
+    char                name[MAX_FILE_NAME_LENGHT];
+    enum ProcEntryType  type;
+    struct ProcEntry    *next;
+    struct ProcEntry    *prev;
+};
+
+struct
+ProcEntryList {
+    struct ProcEntry    *head;
+    struct ProcEntry    *tail;
+};
+
+// Create new instance ProcEntryList
+struct ProcEntryList *
+proc_entry_list_init(void);
+
+struct ProcEntry *
+proc_entry_init(void);
+
+struct ProcEntry *
+proc_entry_push(struct ProcEntry *entry, struct ProcEntryList *list);
+
+#define proc_entry_list_foreach(entry, entry_list) \
+for (entry = entry_list->head;                     \
+     entry != entry_list->tail;                    \
+     entry = entry->next)
+
+static i32
+proc_entry_pop(struct ProcEntryList *list);
+
+i32
+proc_entry_list_free(struct ProcEntryList *list);
+
+struct ProcEntryList *
+filter_entry_list(struct ProcEntryList *list, enum ProcEntryType filter);
 
 #endif /* process.h */
